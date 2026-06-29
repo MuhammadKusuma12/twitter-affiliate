@@ -1,9 +1,20 @@
-import { useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react'
 
 function PostCard({ post }) {
   const [currentImage, setCurrentImage] = useState(0)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [qty, setQty] = useState(1)
+  const [actionMessage, setActionMessage] = useState('')
+  const [actionVisible, setActionVisible] = useState(false)
+  const stock = post.product?.stock ?? 50
   const hasMultipleImages = post.images && post.images.length > 1
+
+  useEffect(() => {
+    if (!actionVisible) return
+    const timer = setTimeout(() => setActionVisible(false), 1800)
+    return () => clearTimeout(timer)
+  }, [actionVisible])
 
   const prevImage = (e) => {
     e.stopPropagation()
@@ -34,6 +45,124 @@ function PostCard({ post }) {
 
           {/* Content */}
           <p className="text-gray-900 mt-0.5 text-[15px] leading-5 text-left">{post.content}</p>
+
+          {/* Product Card */}
+          {post.product && (
+            <>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setModalOpen(true)
+                  setQty(1)
+                }}
+                className="mt-3 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+              >
+                <div className="flex gap-3 p-3 bg-gray-50">
+                  {/* Product Image */}
+                  <div className="w-24 h-24 rounded-lg overflow-hidden bg-white border border-gray-200 flex-shrink-0">
+                    <img
+                      src={post.product.image}
+                      alt={post.product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-1">
+                        <ShoppingBag className="w-4 h-4 text-blue-500" />
+                        <span className="text-xs text-gray-600 truncate">Produk</span>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 text-sm mt-1 truncate">{post.product.name}</h3>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-blue-600 font-bold text-sm">{post.product.price}</span>
+                      <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold transition-colors">
+                        {post.product.buttonText}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal */}
+              {modalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                  <div
+                    className="absolute inset-0 bg-black/40"
+                    onClick={() => setModalOpen(false)}
+                  />
+                  <div className="relative bg-white rounded-xl shadow-xl w-[92%] max-w-2xl mx-4 overflow-hidden">
+                    <button
+                      className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+                      onClick={() => setModalOpen(false)}
+                    >
+                      ✕
+                    </button>
+                    <div className="p-5">
+                      <div className="grid grid-cols-2 gap-3">
+                        <img src={post.product.image} alt={post.product.name} className="w-full h-100 object-cover rounded-md col-span-2" />
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="font-bold text-black">{post.product.name}</h3>
+                        <div className="text-blue-600 font-bold text-xl mt-1">{post.product.price}</div>
+                        <div className="text-sm text-gray-600 mt-3">{post.product.description ?? 'Sepatu sneakers dengan teknologi terbaru untuk kenyamanan maksimal.'}</div>
+                        <div className="text-sm text-gray-500 mt-3">Stok tersedia: {stock}</div>
+
+                        <div className="mt-4 border-t border-gray-100 pt-4 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="text-sm text-black">Jumlah:</div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                className="w-8 h-8 rounded-md border border-gray-200 flex items-center justify-center text-black"
+                              >
+                                -
+                              </button>
+                              <div className="w-8 text-center text-black">{qty}</div>
+                              <button
+                                onClick={() => setQty((q) => Math.min(stock, q + 1))}
+                                className="w-8 h-8 rounded-md border border-gray-200 flex items-center justify-center text-black "
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flex-1" />
+                        </div>
+
+                        <div className="mt-4 space-y-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setActionMessage(`🛒 Menambahkan ${qty} ${post.product.name} ke keranjang`)
+                              setActionVisible(true)
+                              setModalOpen(false)
+                            }}
+                            className="w-full bg-black text-white py-3 rounded-md font-semibold"
+                          >
+                            🛒 Tambah ke Keranjang
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setActionMessage(`🛍️ Membeli ${qty} ${post.product.name}`)
+                              setActionVisible(true)
+                              setModalOpen(false)
+                            }}
+                            className="w-full border border-gray-200 text-black py-3 rounded-md font-semibold"
+                          >
+                            Beli Sekarang
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
 
           {/* Images */}
           {post.images && post.images.length > 0 && (
@@ -107,6 +236,14 @@ function PostCard({ post }) {
               </div>
               <span className="text-xs">{post.views}</span>
             </button>
+          </div>
+        </div>
+      </div>
+      <div className={`fixed right-4 bottom-4 z-60 max-w-sm rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl shadow-black/10 transition-all duration-300 ${actionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500 text-white text-lg">✓</div>
+          <div>
+            <p className="text-sm font-semibold text-black">{actionMessage}</p>
           </div>
         </div>
       </div>
