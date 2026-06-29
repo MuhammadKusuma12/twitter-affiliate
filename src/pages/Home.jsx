@@ -28,7 +28,7 @@ function Home() {
     {
       id: 1,
       name: 'Pengguna Saat Ini',
-      handle: '@pengggunasatini',
+      handle: '@pengggunasaatini',
       avatar: 'PS',
       time: '1h',
       content: 'Baru saja dapat sepatu baru! Kualitasnya luar biasa, sangat nyaman dipakai 👟',
@@ -153,7 +153,7 @@ function Home() {
       <div className="px-3 py-3 border-b border-gray-200">
         <div className="flex gap-3">
           <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
-            MK
+            PS
           </div>
           <div className="flex-1">
             <textarea
