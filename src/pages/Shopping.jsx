@@ -13,12 +13,25 @@ function Shopping() {
   ]
 
   const groupByMarketplace = (items) => {
-    return items.reduce((acc, item) => {
+    const grouped = {}
+    items.forEach(item => {
       const marketplace = item.product.marketplace || 'Other'
-      if (!acc[marketplace]) acc[marketplace] = []
-      acc[marketplace].push(item)
-      return acc
-    }, {})
+      if (!grouped[marketplace]) grouped[marketplace] = []
+      grouped[marketplace].push(item)
+    })
+    return grouped
+  }
+
+  const aggregateQuantities = (items) => {
+    const productMap = {}
+    items.forEach(item => {
+      const id = item.product.id
+      if (!productMap[id]) {
+        productMap[id] = { product: item.product, quantity: 0 }
+      }
+      productMap[id].quantity += item.quantity || 1
+    })
+    return Object.values(productMap)
   }
 
   const calculateMarketplaceTotal = (items) => {
@@ -76,36 +89,46 @@ function Shopping() {
                 <p className="text-sm text-gray-600 mb-2">Shipping Address: Jakarta, Indonesia</p>
               </div>
 
-              {Object.entries(groupByMarketplace(cartItems)).map(([marketplace, items]) => (
-                <div key={marketplace} className="border border-gray-200 rounded-xl mb-3 overflow-hidden">
-                  {/* Marketplace Header */}
-                  <div className="bg-gray-50 px-3 py-2 border-b border-gray-200">
-                    <h3 className="font-semibold text-black text-sm">{marketplace}</h3>
-                  </div>
-
-                  {/* Products */}
-                  <div className="p-3">
-                    {items.map((item) => (
-                      <ProductCard key={`${item.product.id}-${item.quantity}`} product={item.product} />
-                    ))}
-                  </div>
-
-                  {/* Checkout per Marketplace */}
-                  <div className="border-t border-gray-200 px-3 py-3 bg-gray-50">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-sm">Marketplace Total</span>
-                      <span className="font-bold text-blue-500 text-sm">{formatPrice(calculateMarketplaceTotal(items))}</span>
+              {Object.entries(groupByMarketplace(cartItems)).map(([marketplace, items]) => {
+                const aggregated = aggregateQuantities(items)
+                return (
+                  <div key={marketplace} className="border border-gray-200 rounded-xl mb-3 overflow-hidden">
+                    {/* Marketplace Header */}
+                    <div className="bg-gray-50 px-3 py-2 border-b border-gray-200">
+                      <h3 className="font-semibold text-black text-sm">{marketplace}</h3>
                     </div>
-                    <button
-                      onClick={() => handleCheckout(marketplace, items)}
-                      className="w-full mt-2 bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm"
-                    >
-                      <CreditCard className="w-3 h-3" />
-                      Checkout at {marketplace}
-                    </button>
+
+                    {/* Products */}
+                    <div className="p-3">
+                      {aggregated.map((item) => (
+                        <ProductCard
+                          key={item.product.id}
+                          product={item.product}
+                          quantity={item.quantity}
+                          readOnly
+                        />
+                      ))}
+                    </div>
+
+                    {/* Checkout per Marketplace */}
+                    <div className="border-t border-gray-200 px-3 py-3 bg-gray-50">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-sm">Marketplace Total</span>
+                        <span className="font-bold text-blue-500 text-sm">
+                          {formatPrice(calculateMarketplaceTotal(aggregated))}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleCheckout(marketplace, aggregated)}
+                        className="w-full mt-2 bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm"
+                      >
+                        <CreditCard className="w-3 h-3" />
+                        Checkout at {marketplace}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <div className="py-12 text-center text-gray-500 text-sm">
@@ -120,18 +143,26 @@ function Shopping() {
         <div>
           {purchasedItems.length > 0 ? (
             <div className="p-3">
-              {Object.entries(groupByMarketplace(purchasedItems)).map(([marketplace, items]) => (
-                <div key={marketplace} className="border border-gray-200 rounded-xl mb-3 overflow-hidden">
-                  <div className="bg-gray-50 px-3 py-2 border-b border-gray-200">
-                    <h3 className="font-semibold text-black text-sm">{marketplace}</h3>
+              {Object.entries(groupByMarketplace(purchasedItems)).map(([marketplace, items]) => {
+                const aggregated = aggregateQuantities(items)
+                return (
+                  <div key={marketplace} className="border border-gray-200 rounded-xl mb-3 overflow-hidden">
+                    <div className="bg-gray-50 px-3 py-2 border-b border-gray-200">
+                      <h3 className="font-semibold text-black text-sm">{marketplace}</h3>
+                    </div>
+                    <div className="p-3">
+                      {aggregated.map((item) => (
+                        <ProductCard
+                          key={item.product.id}
+                          product={item.product}
+                          quantity={item.quantity}
+                          readOnly
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <div className="p-3">
-                    {items.map((item) => (
-                      <ProductCard key={`${item.product.id}-${item.quantity}`} product={item.product} />
-                    ))}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <div className="py-12 text-center text-gray-500 text-sm">

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { ShoppingBag } from 'lucide-react'
 import { usePosts } from '../context/PostsContext'
 
-function ProductCard({ product }) {
+function ProductCard({ product, quantity, readOnly }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [qty, setQty] = useState(1)
   const [actionMessage, setActionMessage] = useState('')
@@ -16,16 +16,16 @@ function ProductCard({ product }) {
     return () => clearTimeout(timer)
   }, [actionVisible])
 
-  return (
+return (
     <>
       {/* Product Card Preview */}
       <div
-        onClick={(e) => {
+        onClick={!readOnly ? (e) => {
           e.stopPropagation()
           setModalOpen(true)
           setQty(1)
-        }}
-        className="mt-3 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+        } : undefined}
+        className={`mt-3 rounded-2xl border border-gray-200 overflow-hidden${readOnly ? '' : ' hover:shadow-md transition-shadow cursor-pointer'}`}
       >
         <div className="flex gap-3 p-3 bg-gray-50">
           {/* Product Image */}
@@ -37,23 +37,28 @@ function ProductCard({ product }) {
             />
           </div>
 
-{/* Product Info */}
-              <div className="flex-1 flex flex-col justify-between">
-                <div className="text-left">
-                  <div className="flex items-center gap-1">
-                    <ShoppingBag className="w-4 h-4 text-blue-500" />
-                    <span className="text-xs text-gray-600 truncate">Produk</span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mt-1 truncate">{product.name}</h3>
-                  {product.marketplace && (
-                    <span className="text-sm font-medium text-blue-500">{product.marketplace}</span>
-                  )}
-                </div>
+          {/* Product Info */}
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="text-left">
+              <div className="flex items-center gap-1">
+                <ShoppingBag className="w-4 h-4 text-blue-500" />
+                <span className="text-xs text-gray-600 truncate">Produk</span>
+              </div>
+              <h3 className="font-semibold text-gray-900 text-sm mt-1 truncate">{product.name}</h3>
+              {product.marketplace && (
+                <span className="text-sm font-medium text-blue-500">{product.marketplace}</span>
+              )}
+              {quantity > 1 && (
+                <span className="text-xs text-gray-500 ml-1">×{quantity}</span>
+              )}
+            </div>
             <div className="flex items-center justify-between">
               <span className="text-blue-600 font-bold text-sm">{product.price}</span>
-              <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold transition-colors">
-                {product.buttonText}
-              </button>
+              {!readOnly && (
+                <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold transition-colors">
+                  {product.buttonText}
+                </button>
+              )}
             </div>
           </div>
         </div>
