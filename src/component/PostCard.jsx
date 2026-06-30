@@ -51,6 +51,12 @@ function PostCard({ post, showStar = false, onAffiliateSelect }) {
 
   // Get product: prefer image-specific product, fallback to post-level product
   const currentProduct = (post.imageProducts && post.imageProducts[currentImage]) || post.product || null
+  const profilePath = post.handle === '@muhammadkusuma' ? '/profile' : `/user/${post.handle.replace('@', '')}`
+
+  const openProfile = (e) => {
+    e.stopPropagation()
+    navigate(profilePath)
+  }
 
   const prevImage = (e) => {
     e.stopPropagation()
@@ -82,15 +88,31 @@ function PostCard({ post, showStar = false, onAffiliateSelect }) {
       >
         <div className="flex gap-3">
           {/* Avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+          <button
+            type="button"
+            onClick={openProfile}
+            className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold flex-shrink-0"
+          >
             {post.avatar}
-          </div>
+          </button>
 
           <div className="flex-1 min-w-0">
             {/* Header */}
             <div className="flex items-center gap-1 text-sm">
-              <span className="font-bold text-gray-900 truncate">{post.name}</span>
-              <span className="text-gray-500 truncate">{post.handle}</span>
+              <button
+                type="button"
+                onClick={openProfile}
+                className="font-bold text-gray-900 truncate hover:underline"
+              >
+                {post.name}
+              </button>
+              <button
+                type="button"
+                onClick={openProfile}
+                className="text-gray-500 truncate hover:underline"
+              >
+                {post.handle}
+              </button>
               <span className="text-gray-500">·</span>
               <span className="text-gray-500 whitespace-nowrap">{post.time}</span>
               {/* Spacer to push dots to the right */}

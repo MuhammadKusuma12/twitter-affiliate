@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Profile from './pages/Profile'
 import PostDetail from './pages/PostDetail'
 import Shopping from './pages/Shopping'
+import UserProfile from './pages/UserProfile'
 import { PostsProvider } from './context/PostsContext'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user/:handle" element={<UserProfile />} />
           <Route path="/shopping" element={<Shopping />} />
           <Route path="/post/:id" element={<PostDetail />} />
         </Route>

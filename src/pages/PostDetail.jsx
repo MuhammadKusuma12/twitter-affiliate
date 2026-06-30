@@ -25,6 +25,55 @@ const replies = [
   },
 ]
 
+const postReplies = {
+  0: [
+    { id: 1, name: 'Affiliate Hunter', handle: '@affiliatehunter', avatar: 'AH', time: '1h', content: 'Komisinya lumayan juga. Ada dashboard untuk tracking klik dan konversi?', likes: 18 },
+    { id: 2, name: 'Creator Lokal', handle: '@creatorlokal', avatar: 'CL', time: '45m', content: 'Menarik nih buat kreator kecil yang sering review produk.', likes: 9 },
+  ],
+  1: [
+    { id: 1, name: 'Sneakerhead', handle: '@sneakerhead', avatar: 'SH', time: '1h', content: 'Warna apa yang kamu beli? Pengen beli juga nih!', likes: 12 },
+    { id: 2, name: 'Pengguna Saat Ini', handle: '@penggunasatini', avatar: 'PS', time: '1h', content: 'Warna hitam! Cocok buat daily use.', likes: 5 },
+  ],
+  2: [
+    { id: 1, name: 'AI Researcher', handle: '@airesearcher', avatar: 'AI', time: '58m', content: 'Setuju. Bagian paling menarik justru bagaimana AI membantu pekerjaan harian.', likes: 221 },
+    { id: 2, name: 'Builder', handle: '@buildmore', avatar: 'BM', time: '42m', content: 'Exciting, tapi safety dan transparansi tetap harus ikut berkembang.', likes: 119 },
+  ],
+  3: [
+    { id: 1, name: 'Frontend Dev', handle: '@frontenddev', avatar: 'FD', time: '3h', content: 'Compiler barunya bikin penasaran. Semoga migrasinya mulus untuk project besar.', likes: 87 },
+    { id: 2, name: 'React Fan', handle: '@reactfan', avatar: 'RF', time: '2h', content: 'Server components makin matang. Dokumentasinya juga makin enak dibaca.', likes: 64 },
+  ],
+  4: [
+    { id: 1, name: 'Space Nerd', handle: '@spacenerd', avatar: 'SN', time: '2h', content: 'Setiap foto Webb selalu bikin sadar seberapa luas semesta ini.', likes: 412 },
+    { id: 2, name: 'Astro Photo', handle: '@astrophotos', avatar: 'AP', time: '1h', content: 'Detail galaksinya luar biasa. Ada link resolusi tingginya?', likes: 138 },
+  ],
+  5: [
+    { id: 1, name: 'CSS Tinkerer', handle: '@csstinkerer', avatar: 'CT', time: '5h', content: 'Plugin Vite-nya kerasa banget lebih cepat waktu rebuild.', likes: 41 },
+    { id: 2, name: 'UI Engineer', handle: '@uiengineer', avatar: 'UI', time: '4h', content: 'Utility class-nya masih paling enak buat jaga konsistensi UI.', likes: 27 },
+  ],
+  6: [
+    { id: 1, name: 'DX Enthusiast', handle: '@dxenthusiast', avatar: 'DX', time: '7h', content: 'HMR Vite memang susah ditinggal kalau sudah terbiasa.', likes: 73 },
+    { id: 2, name: 'Bundler Watch', handle: '@bundlerwatch', avatar: 'BW', time: '6h', content: 'Penasaran peningkatan build production-nya di app besar.', likes: 36 },
+  ],
+  7: [
+    { id: 1, name: 'Runner Daily', handle: '@runnerdaily', avatar: 'RD', time: '25m', content: 'Ultraboost nyaman banget buat jalan jauh. Diskonnya sampai kapan?', likes: 15 },
+    { id: 2, name: 'Sole Review', handle: '@solereview', avatar: 'SR', time: '18m', content: 'Kalau untuk lari santai oke, cushioning-nya empuk.', likes: 8 },
+  ],
+  101: [
+    { id: 1, name: 'Code Buddy', handle: '@codebuddy', avatar: 'CB', time: '50m', content: 'Clean banget. Stack React + Tailwind memang enak buat prototyping cepat.', likes: 31 },
+    { id: 2, name: 'Open Source ID', handle: '@opensourceid', avatar: 'OS', time: '35m', content: 'Drop link repo-nya dong, pengen lihat struktur komponennya.', likes: 22 },
+  ],
+  102: [
+    { id: 1, name: 'Golden Hour', handle: '@goldenhour', avatar: 'GH', time: '2h', content: 'Warnanya cakep banget. Ini pakai kamera apa?', likes: 19 },
+    { id: 2, name: 'Muhammad Kusuma', handle: '@muhammadkusuma', avatar: 'MK', time: '1h', content: 'Pakai kamera HP aja, kebetulan langitnya lagi bagus.', likes: 11 },
+  ],
+  103: [
+    { id: 1, name: 'Web Notes', handle: '@webnotes', avatar: 'WN', time: '4h', content: 'Artikel seperti ini bagus buat reminder sebelum mulai refactor besar.', likes: 16 },
+    { id: 2, name: 'Senior Dev', handle: '@seniordev', avatar: 'SD', time: '3h', content: 'Setuju. Praktik modern tetap harus disesuaikan dengan kebutuhan tim.', likes: 12 },
+  ],
+}
+
+const getProfilePath = (handle = '') => (handle === '@muhammadkusuma' ? '/profile' : `/user/${handle.replace('@', '')}`)
+
 function Avatar({ value, small = false }) {
   return (
     <div
@@ -45,6 +94,7 @@ function PostDetail() {
   const [currentImage, setCurrentImage] = useState(0)
   const hasMultipleImages = post?.images && post.images.length > 1
   const currentProduct = post?.imageProducts?.[currentImage] || post?.product || null
+  const postDetailReplies = postReplies[String(post?.id)] ?? replies
 
   if (!post) {
     return (
@@ -81,13 +131,25 @@ function PostDetail() {
 
       <article className="border-b border-gray-200 px-4 py-4">
         <div className="flex gap-3">
-          <Link to="/profile" onClick={(event) => event.stopPropagation()}>
+          <Link to={getProfilePath(post.handle)} onClick={(event) => event.stopPropagation()}>
             <Avatar value={post.avatar} />
           </Link>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1 text-sm">
-              <span className="font-bold text-gray-900">{post.name}</span>
-              <span className="truncate text-gray-500">{post.handle}</span>
+              <Link
+                to={getProfilePath(post.handle)}
+                onClick={(event) => event.stopPropagation()}
+                className="font-bold text-gray-900 hover:underline"
+              >
+                {post.name}
+              </Link>
+              <Link
+                to={getProfilePath(post.handle)}
+                onClick={(event) => event.stopPropagation()}
+                className="truncate text-gray-500 hover:underline"
+              >
+                {post.handle}
+              </Link>
               <span className="text-gray-500">·</span>
               <span className="whitespace-nowrap text-gray-500">{post.time}</span>
             </div>
@@ -173,14 +235,20 @@ function PostDetail() {
       </section>
 
       <section>
-        {replies.map((reply) => (
+        {postDetailReplies.map((reply) => (
           <article key={reply.id} className="border-b border-gray-200 px-4 py-4">
             <div className="flex gap-3">
-              <Avatar value={reply.avatar} />
+              <Link to={getProfilePath(reply.handle)}>
+                <Avatar value={reply.avatar} />
+              </Link>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1 text-sm">
-                  <span className="font-bold text-gray-900">{reply.name}</span>
-                  <span className="truncate text-gray-500">{reply.handle}</span>
+                  <Link to={getProfilePath(reply.handle)} className="font-bold text-gray-900 hover:underline">
+                    {reply.name}
+                  </Link>
+                  <Link to={getProfilePath(reply.handle)} className="truncate text-gray-500 hover:underline">
+                    {reply.handle}
+                  </Link>
                   <span className="text-gray-500">·</span>
                   <span className="whitespace-nowrap text-gray-500">{reply.time}</span>
                 </div>
