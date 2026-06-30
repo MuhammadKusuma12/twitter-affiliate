@@ -56,10 +56,6 @@ function Shopping() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="px-3 py-3 border-b border-gray-200">
-        <h1 className="text-xl font-extrabold text-black">Shopping</h1>
-      </div>
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200">
