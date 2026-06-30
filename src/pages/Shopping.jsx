@@ -5,7 +5,7 @@ import ProductCard from '../component/ProductCard'
 
 function Shopping() {
   const [activeTab, setActiveTab] = useState('cart')
-  const { cartItems, purchasedItems, purchaseCart } = usePosts()
+  const { cartItems, purchasedItems, setCartItems, setPurchasedItems } = usePosts()
 
   const tabs = [
     { key: 'cart', label: 'Cart', icon: ShoppingCart },
@@ -49,7 +49,9 @@ function Shopping() {
   const handleCheckout = (marketplace, items) => {
     const total = calculateMarketplaceTotal(items)
     alert(`Checkout at ${marketplace} - Total: ${formatPrice(total)}`)
-    purchaseCart()
+    const itemsToCheckout = cartItems.filter(item => item.product.marketplace === marketplace)
+    setPurchasedItems(prev => [...prev, ...itemsToCheckout])
+    setCartItems(prev => prev.filter(item => item.product.marketplace !== marketplace))
   }
 
   return (

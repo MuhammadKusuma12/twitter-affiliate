@@ -1,20 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ShoppingBag } from 'lucide-react'
 import { usePosts } from '../context/PostsContext'
 
 function ProductCard({ product, quantity, readOnly }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [qty, setQty] = useState(1)
-  const [actionMessage, setActionMessage] = useState('')
-  const [actionVisible, setActionVisible] = useState(false)
   const { addToCart } = usePosts()
   const stock = product?.stock ?? 50
-
-  useEffect(() => {
-    if (!actionVisible) return
-    const timer = setTimeout(() => setActionVisible(false), 1800)
-    return () => clearTimeout(timer)
-  }, [actionVisible])
 
 return (
     <>
@@ -125,8 +117,6 @@ return (
                       onClick={(e) => {
                         e.stopPropagation()
                         addToCart({ ...product, quantity: qty })
-                        setActionMessage(`🛒 Menambahkan ${qty} ${product.name} ke keranjang`)
-                        setActionVisible(true)
                         setModalOpen(false)
                       }}
                       className="flex-1 bg-black text-white py-2 rounded-md text-sm font-semibold"
@@ -137,8 +127,7 @@ return (
                       onClick={(e) => {
                         e.stopPropagation()
                         addToCart({ ...product, quantity: qty })
-                        setActionMessage(`🛍️ Membeli ${qty} ${product.name}`)
-                        setActionVisible(true)
+                        alert(`🛍️ Membeli ${qty} ${product.name} dari ${product.marketplace || 'Marketplace'}`)
                         setModalOpen(false)
                       }}
                       className="flex-1 border border-gray-200 text-black py-2 rounded-md text-sm font-semibold"
@@ -152,16 +141,6 @@ return (
           </div>
         </div>
       )}
-
-      {/* Toast notification */}
-      <div className={`fixed right-4 bottom-4 z-60 max-w-sm rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl shadow-black/10 transition-all duration-300 ${actionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500 text-white text-lg">✓</div>
-          <div>
-            <p className="text-sm font-semibold text-black">{actionMessage}</p>
-          </div>
-        </div>
-      </div>
     </>
   )
 }

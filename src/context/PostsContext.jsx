@@ -266,6 +266,8 @@ export function PostsProvider({ children }) {
       homePosts,
       cartItems,
       purchasedItems,
+      setCartItems,
+      setPurchasedItems,
       addAffiliateToPost,
       addToCart,
       purchaseCart,
