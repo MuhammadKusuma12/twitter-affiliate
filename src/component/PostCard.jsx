@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Star, MoreHorizontal } from 'lucide-react'
 import ProductCard from './ProductCard'
 import AffiliateModal from './AffiliateModal'
@@ -41,6 +42,7 @@ function PostMenu({ onAffiliateClick }) {
 }
 
 function PostCard({ post, showStar = false, onAffiliateSelect }) {
+  const navigate = useNavigate()
   const [currentImage, setCurrentImage] = useState(0)
   const [imageModalOpen, setImageModalOpen] = useState(false)
   const [affiliateModalOpen, setAffiliateModalOpen] = useState(false)
@@ -74,7 +76,10 @@ function PostCard({ post, showStar = false, onAffiliateSelect }) {
 
   return (
     <>
-      <div className="px-3 py-3 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div
+        onClick={() => navigate(`/post/${post.id}`)}
+        className="px-3 py-3 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+      >
         <div className="flex gap-3">
           {/* Avatar */}
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold flex-shrink-0">
@@ -147,7 +152,7 @@ function PostCard({ post, showStar = false, onAffiliateSelect }) {
             {currentProduct && <ProductCard product={currentProduct} />}
 
             {/* Action Buttons */}
-            <div className="flex justify-between mt-3 max-w-md">
+            <div className="flex justify-between mt-3 max-w-md" onClick={(e) => e.stopPropagation()}>
               <button className="flex items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors group">
                 <div className="p-1.5 rounded-full group-hover:bg-blue-50">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

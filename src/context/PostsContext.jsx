@@ -257,7 +257,7 @@ export function PostsProvider({ children }) {
   }, [])
 
   const getPostById = useCallback((id) => {
-    return [...profilePosts, ...homePosts].find(p => p.id === id)
+    return [...profilePosts, ...homePosts].find(p => String(p.id) === String(id))
   }, [profilePosts, homePosts])
 
   return (
