@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { Home, User } from 'lucide-react'
+import { Home, User, ShoppingBag } from 'lucide-react'
 
 function LeftSidebar() {
   const menuItems = [
     { to: '/', icon: Home, label: 'Home' },
     { to: '/profile', icon: User, label: 'Profile' },
+    { to: '/shopping', icon: ShoppingBag, label: 'Shopping' },
   ]
 
   return (

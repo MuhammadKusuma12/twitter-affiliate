@@ -1,10 +1,13 @@
-import { Outlet, NavLink } from 'react-router-dom'
-import { Home, User } from 'lucide-react'
+import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { Home, User, ShoppingBag } from 'lucide-react'
 import LeftSidebar from './LeftSidebar'
 import RightSidebar from './RightSidebar'
 import Topbar from './Topbar'
 
 function MainLayout() {
+  const location = useLocation()
+  const showTopbar = location.pathname === '/'
+
   return (
     <div className="flex justify-center min-h-screen bg-white">
       {/* Left Sidebar - hidden on mobile, visible on lg+ */}
@@ -14,7 +17,7 @@ function MainLayout() {
 
       {/* Main Content - full width mobile, max-width on desktop */}
       <div className="w-full lg:max-w-[600px] xl:max-w-[600px] border-x border-gray-200 min-h-screen pb-14 lg:pb-0">
-        <Topbar />
+        {showTopbar && <Topbar />}
         <Outlet />
       </div>
 
@@ -29,6 +32,7 @@ function MainLayout() {
           {[
             { to: '/', icon: Home, label: 'Home' },
             { to: '/profile', icon: User, label: 'Profile' },
+            { to: '/shopping', icon: ShoppingBag, label: 'Shopping' },
           ].map((item) => (
             <NavLink
               key={item.to}
